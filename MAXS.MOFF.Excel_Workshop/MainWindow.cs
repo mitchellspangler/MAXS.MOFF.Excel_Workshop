@@ -15,6 +15,7 @@ namespace MAXS.MOFF.Excel_Workshop
 {
     public partial class MainWindow : Form
     {
+        public ExcelHandler myHandler = new ExcelHandler();
         public MainWindow()
         {
             InitializeComponent();
@@ -23,7 +24,11 @@ namespace MAXS.MOFF.Excel_Workshop
         private void TestBtn_Click(object sender, EventArgs e)
         {
             //init excel doc
-            ExcelHandler myHandler = new ExcelHandler();
+            myHandler.CreateWorkbook();
+            Range myActiveRange = myHandler.workbook.ActiveSheet.Cells(1, 1);
+            myActiveRange.Value = "Hello World";
+            myHandler.workbook.Activate();
+
         }
     }
 }
@@ -38,7 +43,7 @@ namespace Microsoft.Office.Interop.Excel
 
         public ExcelHandler()
         {
-            Application _application = new Application();
+            this.application = new Application();
 
         }
 
@@ -53,7 +58,7 @@ namespace Microsoft.Office.Interop.Excel
         }
         public void CreateWorkbook()
         {
-            this.application.Workbooks.Add("New workbook");
+            this.workbook = this.application.Workbooks.Add();
         }
 
 
@@ -70,7 +75,7 @@ namespace Microsoft.Office.Interop.Excel
         {
             var handler = obj as ExcelHandler;
             return handler != null &&
-                   EqualityComparer<Application>.Default.Equals(_application, handler._application) &&
+                   EqualityComparer<Application>.Default.Equals(application, handler.application) &&
                    EqualityComparer<Workbook>.Default.Equals(workbook, handler.workbook) &&
                    EqualityComparer<Worksheet>.Default.Equals(active_Worksheet, handler.active_Worksheet);
         }
@@ -78,7 +83,7 @@ namespace Microsoft.Office.Interop.Excel
         public override int GetHashCode()
         {
             var hashCode = 168020149;
-            hashCode = hashCode * -1521134295 + EqualityComparer<Application>.Default.GetHashCode(_application);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Application>.Default.GetHashCode(application);
             hashCode = hashCode * -1521134295 + EqualityComparer<Workbook>.Default.GetHashCode(workbook);
             hashCode = hashCode * -1521134295 + EqualityComparer<Worksheet>.Default.GetHashCode(active_Worksheet);
             return hashCode;
